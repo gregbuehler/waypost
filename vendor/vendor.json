@@ -1,0 +1,67 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "A5Ekw4hIlQsshHXa52MVC+d+1DQ=",
+			"path": "github.com/miekg/dns",
+			"revision": "8a56deec68a78bfea6e73db7b086175eb8beec8b",
+			"revisionTime": "2019-06-06T06:36:43Z"
+		},
+		{
+			"checksumSHA1": "2LpxYGSf068307b7bhAuVjvzLLc=",
+			"path": "golang.org/x/crypto/ed25519",
+			"revision": "f99c8df09eb5bff426315721bfa5f16a99cad32c",
+			"revisionTime": "2019-04-11T19:51:25Z"
+		},
+		{
+			"checksumSHA1": "0JTAFXPkankmWcZGQJGScLDiaN8=",
+			"path": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"revision": "f99c8df09eb5bff426315721bfa5f16a99cad32c",
+			"revisionTime": "2019-04-11T19:51:25Z"
+		},
+		{
+			"checksumSHA1": "4rZ8D9GLDvy+6S940nMs75DvyfA=",
+			"path": "golang.org/x/net/bpf",
+			"revision": "26fcbda1b1be1b09f24b8cac9de10ee0de47d7da",
+			"revisionTime": "2019-06-07T17:16:44Z"
+		},
+		{
+			"checksumSHA1": "8oJoT8rfokzpkJ19eNhRs2JgRxI=",
+			"path": "golang.org/x/net/internal/iana",
+			"revision": "26fcbda1b1be1b09f24b8cac9de10ee0de47d7da",
+			"revisionTime": "2019-06-07T17:16:44Z"
+		},
+		{
+			"checksumSHA1": "W7qmxY/PsUW0VSJugiq+I71SiAY=",
+			"path": "golang.org/x/net/internal/socket",
+			"revision": "26fcbda1b1be1b09f24b8cac9de10ee0de47d7da",
+			"revisionTime": "2019-06-07T17:16:44Z"
+		},
+		{
+			"checksumSHA1": "hskK22ehOrdMPpbUnnzLo5cxBWk=",
+			"path": "golang.org/x/net/ipv4",
+			"revision": "26fcbda1b1be1b09f24b8cac9de10ee0de47d7da",
+			"revisionTime": "2019-06-07T17:16:44Z"
+		},
+		{
+			"checksumSHA1": "g7axmYXVFx/t/k44PRgObnsyb0g=",
+			"path": "golang.org/x/net/ipv6",
+			"revision": "26fcbda1b1be1b09f24b8cac9de10ee0de47d7da",
+			"revisionTime": "2019-06-07T17:16:44Z"
+		},
+		{
+			"checksumSHA1": "lGTCdDW7S649Wc//NIpO7xRwKjw=",
+			"path": "golang.org/x/sys/unix",
+			"revision": "7fc4e5ec1444df20dd195ae7c3bbfcd7114d3faa",
+			"revisionTime": "2019-06-06T17:29:06Z"
+		},
+		{
+			"checksumSHA1": "uNFTv8VHGzOmLM2HH4cisGMSXu4=",
+			"path": "golang.org/x/sys/windows",
+			"revision": "7fc4e5ec1444df20dd195ae7c3bbfcd7114d3faa",
+			"revisionTime": "2019-06-06T17:29:06Z"
+		}
+	],
+	"rootPath": "github.com/gregbuehler/waypost"
+}
