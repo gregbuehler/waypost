@@ -151,19 +151,25 @@ enabled = true
         "localhost",
         "127.0.0.1",
 
+        # google services
+        "www.google.com",
+        "mail.google.com",
+        "drive.google.com",
+
         # communication
         "slack.com",
 
-        # amazon static content server
+        # common cdn's
         "s3.amazonaws.com",
-
-        # Google Content (Andy Short)
+        "clients1.google.com",
         "clients2.google.com",
         "clients3.google.com",
         "clients4.google.com",
         "clients5.google.com",
+        "cdn.optimizely.com",
 
-        # Link Shortners (Openphish, Hostsfile.org)
+        # link shorteners
+        "tc.o",
         "www.bit.ly",
         "bit.ly",
         "ow.ly",
@@ -171,14 +177,16 @@ enabled = true
         "goo.gl",
         "tinyurl.com",
 
-        # Microsoft Connectivity Checker (Mahakala)
+        # connectivity checking
         "msftncsi.com",
         "www.msftncsi.com",
 
-        # EA / Origin (Mahakala, Andy Short, Cameleon & others)
+        # game services
+        "v10.events.data.microsoft.com",
+        "v20.events.data.microsoft.com",
         "ea.com",
-        "cdn.optimizely.com", #(Used by Origin for content delivery)
 
+        # misc
         "res.cloudinary.com", #(Used by Facebook for image uploads)
         "gravatar.com",
         "rover.ebay.com",
@@ -187,8 +195,6 @@ enabled = true
         "alluremedia.com.au", # (Used by Gizmodo sites)
         "tomshardware.com",
         "ocsp.apple.com", # (Used by Apple devices for certificate validation)
-
-        #Blocked by various lists
         "s.shopify.com",
         "keystone.mwbsys.com", # (Malwarebytes server)
         "dl.dropbox.com",
@@ -197,4 +203,7 @@ enabled = true
 
     # remote list of domains to whitelist
     upstreams = [
+        "https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/whitelist.txt",
+        #"https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/optional-list.txt",
+        #"https://raw.githubusercontent.com/anudeepND/whitelist/master/domains/referral-sites.txt",
     ]

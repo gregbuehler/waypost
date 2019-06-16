@@ -64,63 +64,55 @@ func (s *Server) bootstrap() {
 
 	log.Tracef("Initializing Hosts")
 	h := InitRepository(0)
-	for k, v := range config.Hosts.List {
-		log.Tracef("Adding host map %s %s", k, v)
-		h.Set(k, v)
-	}
 	s.Hosts = &h
-	log.Debugf("Initialized Hosts")
+	log.Tracef("Initialized Hosts")
+	log.Tracef("Loading Hosts")
 	go func() {
-		log.Tracef("Loading Hosts from upstreams...")
-		for _, n := range config.Hosts.Upstreams {
-			log.Debugf("Hosts loading %s", n)
-			c, err := h.Fetch(n)
-			if err != nil {
-				log.Warnf("Hosts failed to load %s. %s", n, err)
-			}
-			log.Infof("Hosts loaded %d entries from %s", c, n)
-		}
-		log.Debugf("Loaded Hosts from upstreams")
+		s.Hosts.Populate(
+			s.Config.Hosts.List,
+			s.Config.Hosts.Upstreams,
+		)
+		log.Infof("Loaded Hosts")
 	}()
 
 	log.Tracef("Initializing Blacklist")
 	b := InitRepository(0)
-	for _, n := range config.Filtering.Blacklist.List {
-		b.Set(n, nil)
-	}
 	s.Blacklist = &b
-	log.Debugf("Initialized Blacklist")
-	log.Tracef("Loading Blacklists from upstreams...")
+	log.Tracef("Initialized Blacklist")
+	log.Tracef("Loading Blacklist")
 	go func() {
-		for _, n := range config.Filtering.Blacklist.Upstreams {
-			log.Debugf("Blacklist loading %s", n)
-			c, err := b.Fetch(n)
-			if err != nil {
-				log.Warnf("Blacklist failed to load %s. %s", n, err)
-			}
-			log.Infof("Blacklist loaded %d entries from %s", c, n)
+		m := make(map[string]string, 0)
+		for _, k := range s.Config.Filtering.Blacklist.List {
+			m[k] = ""
 		}
-		log.Debug("Loaded Blacklists from upstreams")
+		_, _, tc, err := s.Blacklist.Populate(
+			m,
+			s.Config.Filtering.Blacklist.Upstreams,
+		)
+		if err != nil {
+			log.Errorf("Failed to populate Blacklist properly. Error: %s", err.Error())
+		}
+		log.Infof("Loaded %d entries in Blacklist", tc)
 	}()
 
 	log.Tracef("Initializing Whitelist")
 	w := InitRepository(0)
-	for _, n := range config.Filtering.Whitelist.List {
-		w.Set(n, nil)
-	}
 	s.Whitelist = &w
-	log.Debugf("Initialized Whitelist")
-	log.Tracef("Loading Whitelists from upstreams...")
+	log.Tracef("Initialized Whitelist")
+	log.Tracef("Loading Whitelist")
 	go func() {
-		for _, n := range config.Filtering.Whitelist.Upstreams {
-			log.Debugf("Whitelist loading %s", n)
-			c, err := w.Fetch(n)
-			if err != nil {
-				log.Warnf("Whitelist failed to load %s. %s", n, err)
-			}
-			log.Infof("Whitelist loaded %d entries from %s", c, n)
+		m := make(map[string]string, 0)
+		for _, k := range s.Config.Filtering.Whitelist.List {
+			m[k] = ""
 		}
-		log.Debug("Loaded Whitelists from upstreams")
+		_, _, tc, err := s.Whitelist.Populate(
+			m,
+			s.Config.Filtering.Whitelist.Upstreams,
+		)
+		if err != nil {
+			log.Errorf("Failed to populate Whitelist properly. Error: %s", err.Error())
+		}
+		log.Infof("Loaded %d entries in Whitelist", tc)
 	}()
 
 	log.Tracef("Initializing Resolvers")
@@ -148,14 +140,14 @@ func (s *Server) bootstrap() {
 		Addr: fmt.Sprintf("%s:%d", host, dnsPort),
 		Net:  "udp",
 	}
-	log.Debugf("Initialized DNS Server")
+	log.Infof("Initialized DNS Server")
 
 	log.Tracef("Initializing Management Server")
 	s.mgmtServer = &MgmtServer{
 		Addr:    fmt.Sprintf("%s:%d", host, mgmtPort),
 		Waypost: s,
 	}
-	log.Debugf("Initialized Management Server")
+	log.Infof("Initialized Management Server")
 }
 
 func (s *Server) printInfo() {
@@ -297,11 +289,11 @@ func (s *Server) resolve(r *dns.Msg) (*dns.Msg, error) {
 
 	_, sname, authoritative := examineName(r.Question[0].Name)
 	qtype := r.Question[0].Qtype
-	qslug := fmt.Sprintf("%s-%d", sname, qtype)
+	qslug := fmt.Sprintf("%s;%d", sname, qtype)
 
 	if s.Config.Filtering.Enabled && s.Config.Filtering.Blacklist.Enabled {
 		log.Tracef("filtering enabled; checking lists for %s", sname)
-		_, _, blacklisted := s.Blacklist.Search(sname)
+		_, _, blacklisted := s.Blacklist.Check(sname)
 		if s.Config.Filtering.Blacklist.Enabled == false {
 			blacklisted = false
 		}
@@ -314,7 +306,7 @@ func (s *Server) resolve(r *dns.Msg) (*dns.Msg, error) {
 		blocked := blacklisted && !whitelisted
 		log.Tracef("action=filter sname=%s blacklist=%t whitelist=%t blocked=%t", sname, blacklisted, whitelisted, blocked)
 		if blacklisted && !whitelisted {
-			log.Infof("action=filter sname=%s blacklist=%t whitelist=%t blocked=%t", sname, blacklisted, whitelisted, blocked)
+			log.Warnf("action=filter sname=%s blacklist=%t whitelist=%t blocked=%t", sname, blacklisted, whitelisted, blocked)
 			m := getEmptyResponse()
 			return m, nil
 		}

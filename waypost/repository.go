@@ -32,11 +32,24 @@ func InitRepository(ttl int64) Repository {
 	}
 }
 
-func (r *Repository) Search(t string) (string, interface{}, bool) {
+func (r *Repository) Check(t string) (string, interface{}, bool) {
 	l := r.List()
 	for _, i := range l {
 		k := strings.Split(i, ";")[0]
 		if k == t {
+			v, _ := r.Get(k)
+			return k, v, true
+		}
+	}
+
+	return "", nil, false
+}
+
+func (r *Repository) Search(t string) (string, interface{}, bool) {
+	l := r.List()
+	for _, i := range l {
+		k := strings.Split(i, ";")[0]
+		if strings.Contains(k, t) {
 			v, _ := r.Get(k)
 			return k, v, true
 		}
