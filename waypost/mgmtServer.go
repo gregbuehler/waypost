@@ -86,6 +86,8 @@ func parseCommand(s []string) (string, string, []string) {
 func (m *MgmtServer) parseAndExecuteCmd(args []string) (string, error) {
 	namespace, action, values := parseCommand(args)
 
+	log.Infof("executing management command: %s %s %v", namespace, action, values)
+
 	// TODO: refactor mgmt command map. nested switches are gross.
 	switch namespace {
 	case "cache":
@@ -260,6 +262,16 @@ func (m *MgmtServer) parseAndExecuteCmd(args []string) (string, error) {
 		default:
 			return "", fmt.Errorf("unknown hosts action '%s'", action)
 		}
+	case "info":
+		o := fmt.Sprintf("version=%s hosts=%d nameservers=%d filtering=%t blacklist=%d whitelist=%d",
+			Version,
+			m.Waypost.Hosts.Count(),
+			len(m.Waypost.Resolvers.List()),
+			m.Waypost.Config.Filtering.Enabled,
+			m.Waypost.Blacklist.Count(),
+			m.Waypost.Whitelist.Count(),
+		)
+		return o, nil
 	default:
 		return "", fmt.Errorf("unknown namespace '%s'", namespace)
 	}

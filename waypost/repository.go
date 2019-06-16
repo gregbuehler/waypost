@@ -80,6 +80,14 @@ func (r *Repository) Get(k string) (interface{}, bool) {
 	return v.Value, true
 }
 
+func (r *Repository) Count() int {
+	r.mutex.RLock()
+	c := len(r.entries)
+	r.mutex.RUnlock()
+
+	return c
+}
+
 // Set specifies the value of an entry value
 func (r *Repository) Set(k string, v interface{}) {
 	k = strings.TrimSpace(k)

@@ -1,14 +1,12 @@
 package main
 
 import (
+	"runtime"
+
 	"github.com/gregbuehler/waypost/cmd"
-	"github.com/spf13/viper"
 )
 
-func run(v *viper.Viper) error {
-	return nil
-}
-
 func main() {
+	runtime.GOMAXPROCS(runtime.NumCPU())
 	cmd.Execute()
 }
