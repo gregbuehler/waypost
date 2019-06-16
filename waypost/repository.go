@@ -3,9 +3,12 @@ package waypost
 import (
 	"io/ioutil"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // Entry describes a value and timestamp within a Repository
@@ -31,8 +34,9 @@ func InitRepository(ttl int64) Repository {
 
 func (r *Repository) Search(t string) (string, interface{}, bool) {
 	l := r.List()
-	for _, k := range l {
-		if strings.Contains(k, t) {
+	for _, i := range l {
+		k := strings.Split(i, ";")[0]
+		if k == t {
 			v, _ := r.Get(k)
 			return k, v, true
 		}
@@ -100,8 +104,54 @@ func (r *Repository) Unset(k string) {
 	r.mutex.Unlock()
 }
 
+func (r *Repository) loadFromString(data string) (int, error) {
+	commentPattern := regexp.MustCompile(`(#.*)`)
+	lines := strings.Split(data, "\n")
+	count := 0
+
+	for _, line := range lines {
+		if commentPattern.MatchString(line) {
+			line = commentPattern.ReplaceAllString(line, "")
+		}
+
+		fields := strings.Fields(line)
+		if len(fields) > 0 {
+			if len(fields) == 1 {
+				r.Set(fields[0], nil)
+				count = count + 1
+			}
+			if len(fields) >= 2 {
+				r.Set(fields[1], fields[0])
+				count = count + 1
+			}
+		}
+	}
+
+	return count, nil
+}
+
+func (r *Repository) Populate(static map[string]string, remotes []string) (int, int, int, error) {
+	for k, v := range static {
+		r.Set(k, v)
+	}
+
+	re := 0
+	for _, n := range remotes {
+		c, err := r.Fetch(n)
+		if err != nil {
+			log.Warnf("Failed to load entries from %s: %s", n, err.Error())
+		}
+		re = re + c
+		log.Debugf("Loaded %d entries from %s", c, n)
+	}
+
+	return len(static), re, len(r.List()), nil
+}
+
+// Fetch populates a repository from a url
 func (r *Repository) Fetch(url string) (int, error) {
 	// TODO: handle getting/setting a local cache of remote sources
+
 	resp, err := http.Get(url)
 	if err != nil {
 		return 0, err
@@ -112,13 +162,6 @@ func (r *Repository) Fetch(url string) (int, error) {
 		return 0, err
 	}
 	resp.Body.Close()
-
-	data := strings.Split(string(body), "\n")
-	for _, v := range data {
-		fields := strings.Fields(v)
-		if len(fields) == 2 {
-			r.Set(fields[0], fields[1])
-		}
-	}
-	return len(data), nil
+	l, err := r.loadFromString(string(body))
+	return l, nil
 }
