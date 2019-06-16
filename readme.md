@@ -1,4 +1,4 @@
-# waypost
+# waypost ![status](https://travis-ci.org/gregbuehler/waypost.svg?branch=master "travis status")
 
 A simple dns resolver with whitelist/blacklist functionality.
 
