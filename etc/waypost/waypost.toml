@@ -149,6 +149,10 @@ enabled = true
     list = [
         # always allow localhost
         "localhost",
+        "127.0.0.1",
+
+        # communication
+        "slack.com",
 
         # amazon static content server
         "s3.amazonaws.com",
