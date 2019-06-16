@@ -68,49 +68,60 @@ func (s *Server) bootstrap() {
 		log.Tracef("Adding host map %s %s", k, v)
 		h.Set(k, v)
 	}
-	for _, n := range config.Hosts.Upstreams {
-		log.Debugf("Hosts loading %s", n)
-		c, err := h.Fetch(n)
-		if err != nil {
-			log.Warnf("Hosts failed to load %s. %s", n, err)
-		}
-		log.Infof("Hosts loaded %d entries from %s", c, n)
-	}
 	s.Hosts = &h
 	log.Debugf("Initialized Hosts")
+	go func() {
+		log.Tracef("Loading Hosts from upstreams...")
+		for _, n := range config.Hosts.Upstreams {
+			log.Debugf("Hosts loading %s", n)
+			c, err := h.Fetch(n)
+			if err != nil {
+				log.Warnf("Hosts failed to load %s. %s", n, err)
+			}
+			log.Infof("Hosts loaded %d entries from %s", c, n)
+		}
+		log.Debugf("Loaded Hosts from upstreams")
+	}()
 
 	log.Tracef("Initializing Blacklist")
-
 	b := InitRepository(0)
 	for _, n := range config.Filtering.Blacklist.List {
 		b.Set(n, nil)
 	}
-	for _, n := range config.Filtering.Blacklist.Upstreams {
-		log.Debugf("Blacklist loading %s", n)
-		c, err := b.Fetch(n)
-		if err != nil {
-			log.Warnf("Blacklist failed to load %s. %s", n, err)
-		}
-		log.Infof("Blacklist loaded %d entries from %s", c, n)
-	}
 	s.Blacklist = &b
 	log.Debugf("Initialized Blacklist")
+	log.Tracef("Loading Blacklists from upstreams...")
+	go func() {
+		for _, n := range config.Filtering.Blacklist.Upstreams {
+			log.Debugf("Blacklist loading %s", n)
+			c, err := b.Fetch(n)
+			if err != nil {
+				log.Warnf("Blacklist failed to load %s. %s", n, err)
+			}
+			log.Infof("Blacklist loaded %d entries from %s", c, n)
+		}
+		log.Debug("Loaded Blacklists from upstreams")
+	}()
 
 	log.Tracef("Initializing Whitelist")
 	w := InitRepository(0)
 	for _, n := range config.Filtering.Whitelist.List {
-		b.Set(n, nil)
-	}
-	for _, n := range config.Filtering.Whitelist.Upstreams {
-		log.Debugf("Whitelist loading %s", n)
-		c, err := w.Fetch(n)
-		if err != nil {
-			log.Warnf("Whitelist failed to load %s. %s", n, err)
-		}
-		log.Infof("Whitelist loaded %d entries from %s", c, n)
+		w.Set(n, nil)
 	}
 	s.Whitelist = &w
 	log.Debugf("Initialized Whitelist")
+	log.Tracef("Loading Whitelists from upstreams...")
+	go func() {
+		for _, n := range config.Filtering.Whitelist.Upstreams {
+			log.Debugf("Whitelist loading %s", n)
+			c, err := w.Fetch(n)
+			if err != nil {
+				log.Warnf("Whitelist failed to load %s. %s", n, err)
+			}
+			log.Infof("Whitelist loaded %d entries from %s", c, n)
+		}
+		log.Debug("Loaded Whitelists from upstreams")
+	}()
 
 	log.Tracef("Initializing Resolvers")
 	r := InitPool([]string{})
