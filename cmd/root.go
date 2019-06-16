@@ -71,7 +71,7 @@ func init() {
 	RootCmd.PersistentFlags().BoolVarP(&helpFlag, "help", "", false, "Help for Waypost")
 
 	// set version on root cmd to cheat cobra version into play
-	RootCmd.Version = "0.0.3"
+	RootCmd.Version = "0.0.5"
 
 	RootCmd.PersistentFlags().StringVarP(&configLocation, "config", "c", defaultConfigLocation, "configuration file")
 	RootCmd.PersistentFlags().StringVarP(&host, "host", "h", defaultHost, "host to bind")
