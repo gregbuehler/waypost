@@ -26,7 +26,7 @@ type serverLoggingConfig struct {
 
 type resolveConfig struct {
 	Nameservers []string `toml:"nameservers"`
-	Search      []string `toml:"search`
+	Search      []string `toml:"search"`
 }
 
 type cacheConfig struct {
