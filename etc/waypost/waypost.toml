@@ -25,7 +25,7 @@ MgmtPort = 5554
 [resolve]
 nameservers = [
     # docker dns
-    "127.0.0.11"
+    "127.0.0.11",
     
     # google
     "8.8.8.8",
