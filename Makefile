@@ -2,8 +2,8 @@ SRC_DIR = ./
 GO_PKGS	:= $(shell go list ./... | grep -v "/vendor/")
 GO_FILES := ./
 CGO_ENABLED = 0
-GOOS ?= $(shell uname -s | tr '[:upper:] [:lower:]')
-GOARCH ?= $(shell uname -m | sed -i '/x86_64/amd64/')
+GOOS ?= $(shell uname -s | tr '[:upper:]' '[:lower:]')
+GOARCH ?= $(shell uname -m | sed -e 's/x86_64/amd64/')
 VALIDATE_DEPS    = golang.org/x/lint/golint
 TEST_DEPS        = github.com/axw/gocov/gocov github.com/AlekSi/gocov-xml
 
